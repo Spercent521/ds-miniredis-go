@@ -1,3 +1,44 @@
 miniredis/
 MyRedis/
 redis/
+
+# ========== Go 核心编译产物（跨平台） ==========
+# 1. 无后缀可执行文件（Go 编译的二进制文件，macOS/Linux 通用）
+*
+!/**/
+!*.go
+!*.mod
+!*.sum
+!*.md
+!.gitignore
+!go.mod
+!go.sum
+
+# 2. Go 编译缓存（Go 1.16+）
+**/go/pkg/mod/
+**/go/pkg/sumdb/
+**/go/pkg/cache/
+**/vendor/  # 可选：如果使用 vendor 目录
+
+# 3. 编译临时文件
+*.o
+*.a
+*.so
+*.dll
+*.exe
+*.out
+*.test
+*.prof
+cover.out  # 测试覆盖率文件
+
+# ========== macOS 特有产物 ==========
+# 1. Go 编译的 macOS 动态库
+*.dylib
+# 2. macOS 调试符号目录（Go 编译时带 -gcflags="-N -l" 会生成）
+*.dSYM/
+# 3. macOS 系统自动生成的文件
+.DS_Store
+**/.DS_Store
+# 4. macOS 下的临时文件
+*.swp
+*.swo
