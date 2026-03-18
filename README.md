@@ -80,7 +80,25 @@ go-redis starting on :6380 (workers=4, maxmemory=67108864 bytes)
 
 ## 命令参考
 
-用 `redis-cli -p 6380` 连接后可直接使用以下命令。
+可使用任意 Redis 协议客户端连接本服务；`redis-cli` 只是调试时的便捷工具，不是运行依赖。
+
+例如：
+
+- 使用 `redis-cli -p 6380`
+- 使用 `nc` 直接发送 RESP2 报文
+
+```bash
+# PING
+printf '*1\r\n$4\r\nPING\r\n' | nc 127.0.0.1 6380
+
+# SET name alice
+printf '*3\r\n$3\r\nSET\r\n$4\r\nname\r\n$5\r\nalice\r\n' | nc 127.0.0.1 6380
+
+# GET name
+printf '*2\r\n$3\r\nGET\r\n$4\r\nname\r\n' | nc 127.0.0.1 6380
+```
+
+下面命令语义与返回说明对所有客户端一致。
 
 ### 连接测试
 
