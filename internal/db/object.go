@@ -23,6 +23,12 @@ const (
 	StringType ObjectType = iota
 	// ListType 表示列表值
 	ListType
+	// 哈希字典
+	HashType 
+	// 无序集合
+	SetType  
+	// 有序集合
+	ZSetType 
 )
 
 // Object 是 Redis 存储的统一数据结构。
@@ -37,7 +43,16 @@ type Object struct {
 	// List 列表值的内容（当 Type == ListType 时使用）
 	// 使用 Go 原生切片作为基础实现
 	List []string
+
+	// Hash 使用 Go 的 map 实现，存储 field -> value
+	Hash map[string]string 
 	
+	// Set 使用 Go 的 map[string]struct{} 实现（struct{} 不占内存，完美充当集合去重）
+	Set  map[string]struct{} 
+	
+	// ZSet 暂时用 map 存储 member -> score，后续实现排序逻辑
+	ZSet map[string]float64
+
 	// ExpireAtMs 过期时间（Unix 毫秒戳）
 	// 0 = 永不过期（无 TTL）
 	// > 0 = 在此时刻过期
