@@ -26,6 +26,7 @@ func RunWithConfig(cfg config.Config) error {
 	command.RegisterGenericCommands(replayRegistry, engine, nil)
 	replayDispatcher := command.NewDispatcher(replayRegistry)
 
+	// runtime dispatcher：write AOF
 	runtimeRegistry := command.NewRegistry()
 	command.RegisterStringCommands(runtimeRegistry, engine, aof)
 	command.RegisterGenericCommands(runtimeRegistry, engine, aof)
