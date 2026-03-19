@@ -20,17 +20,23 @@ func RunWithConfig(cfg config.Config) error {
 	engine := db.NewWithOptions(cfg.MaxMemoryBytes)
 	aof := persistence.NewAOF(cfg.AppendOnlyPath)
 
-	registry := command.NewRegistry()
-	command.RegisterStringCommands(registry, engine, aof)
-	command.RegisterGenericCommands(registry, engine, aof)
-	dispatcher := command.NewDispatcher(registry)
+	// Replay should not append commands back into AOF, otherwise startup can loop forever.
+	replayRegistry := command.NewRegistry()
+	command.RegisterStringCommands(replayRegistry, engine, nil)
+	command.RegisterGenericCommands(replayRegistry, engine, nil)
+	replayDispatcher := command.NewDispatcher(replayRegistry)
+
+	runtimeRegistry := command.NewRegistry()
+	command.RegisterStringCommands(runtimeRegistry, engine, aof)
+	command.RegisterGenericCommands(runtimeRegistry, engine, aof)
+	runtimeDispatcher := command.NewDispatcher(runtimeRegistry)
 
 	// Restore data from AOF before accepting connections.
-	if err := aof.Replay(dispatcher); err != nil {
+	if err := aof.Replay(replayDispatcher); err != nil {
 		log.Printf("[WARN] AOF replay error: %v", err)
 	}
 
 	parser := protocol.NewRESPParser()
-	srv := server.New(cfg, parser, dispatcher)
+	srv := server.New(cfg, parser, runtimeDispatcher)
 	return srv.Start()
 }
