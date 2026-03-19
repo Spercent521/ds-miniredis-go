@@ -24,11 +24,13 @@ func RunWithConfig(cfg config.Config) error {
 	replayRegistry := command.NewRegistry()
 	command.RegisterStringCommands(replayRegistry, engine, nil)
 	command.RegisterGenericCommands(replayRegistry, engine, nil)
+	command.RegisterListCommands(replayRegistry, engine, nil)
 	replayDispatcher := command.NewDispatcher(replayRegistry)
 
 	runtimeRegistry := command.NewRegistry()
 	command.RegisterStringCommands(runtimeRegistry, engine, aof)
 	command.RegisterGenericCommands(runtimeRegistry, engine, aof)
+	command.RegisterListCommands(runtimeRegistry, engine, aof)
 	runtimeDispatcher := command.NewDispatcher(runtimeRegistry)
 
 	// Restore data from AOF before accepting connections.

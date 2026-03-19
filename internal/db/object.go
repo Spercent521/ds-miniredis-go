@@ -21,7 +21,8 @@ type ObjectType uint8
 const (
 	// StringType 表示字符串值
 	StringType ObjectType = iota
-	// 后续可以扩展：HashType, ListType, SetType 等
+	// ListType 表示列表值
+	ListType
 )
 
 // Object 是 Redis 存储的统一数据结构。
@@ -33,6 +34,10 @@ type Object struct {
 	// Str 字符串值的内容
 	Str string
 
+	// List 列表值的内容（当 Type == ListType 时使用）
+	// 使用 Go 原生切片作为基础实现
+	List []string
+	
 	// ExpireAtMs 过期时间（Unix 毫秒戳）
 	// 0 = 永不过期（无 TTL）
 	// > 0 = 在此时刻过期
