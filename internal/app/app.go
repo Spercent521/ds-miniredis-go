@@ -30,14 +30,14 @@ func RunWithConfig(cfg config.Config) error {
 	command.RegisterZSetCommands(replayRegistry, engine, nil)
 	replayDispatcher := command.NewDispatcher(replayRegistry)
 
-	// runtime dispatcher：write AOF
+	// runtime dispatcher：关闭 AOF 写入，开启纯内存狂飙模式 👇
 	runtimeRegistry := command.NewRegistry()
-	command.RegisterStringCommands(runtimeRegistry, engine, aof)
-	command.RegisterGenericCommands(runtimeRegistry, engine, aof)
-	command.RegisterListCommands(runtimeRegistry, engine, aof)
-	command.RegisterHashCommands(runtimeRegistry, engine, aof)
-	command.RegisterSetCommands(runtimeRegistry, engine, aof)
-	command.RegisterZSetCommands(runtimeRegistry, engine, aof)
+	command.RegisterStringCommands(runtimeRegistry, engine, nil)
+	command.RegisterGenericCommands(runtimeRegistry, engine, nil)
+	command.RegisterListCommands(runtimeRegistry, engine, nil)
+	command.RegisterHashCommands(runtimeRegistry, engine, nil)
+	command.RegisterSetCommands(runtimeRegistry, engine, nil)
+	command.RegisterZSetCommands(runtimeRegistry, engine, nil)
 	runtimeDispatcher := command.NewDispatcher(runtimeRegistry)
 
 	// Restore data from AOF before accepting connections.

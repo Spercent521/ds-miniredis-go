@@ -4,7 +4,7 @@ import "time"
 
 // LPush 将一个或多个值插入到列表的头部。
 // 返回插入后列表的长度。
-func (d *DB) LPush(key string, values ...string) int {
+func (d *shard) LPush(key string, values ...string) int {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
@@ -48,7 +48,7 @@ func (d *DB) LPush(key string, values ...string) int {
 }
 
 // 辅助函数：抽取出来的内存淘汰逻辑，方便复用
-func (d *DB) checkAndEvict() {
+func (d *shard) checkAndEvict() {
 	if d.maxMemoryBytes > 0 {
 		for d.usedBytes > d.maxMemoryBytes {
 			evictKey, ok := d.lru.Evict()
@@ -74,7 +74,7 @@ func (d *DB) checkAndEvict() {
 
 // LPop 移除并返回列表的第一个元素。
 // 返回值：(元素值, 是否成功弹出)
-func (d *DB) LPop(key string) (string, bool) {
+func (d *shard) LPop(key string) (string, bool) {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
@@ -114,7 +114,7 @@ func (d *DB) LPop(key string) (string, bool) {
 }
 
 // 辅助函数：计算整个 List 占用的内存
-func (d *DB) calculateListSize(key string, obj *Object) int64 {
+func (d *shard) calculateListSize(key string, obj *Object) int64 {
 	size := entryOverheadBytes + int64(len(key))
 	for _, v := range obj.List {
 		size += int64(len(v))

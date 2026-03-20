@@ -45,7 +45,7 @@ func (s *Server) Start() error {
 		}
 		// Submit connection handling to the worker pool.
 		// In Go 1.22+ the loop variable 'conn' is correctly scoped per iteration.
-		s.pool.Submit(func() { s.handleConn(conn) })
+		go s.handleConn(conn)
 	}
 }
 

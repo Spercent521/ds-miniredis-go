@@ -4,7 +4,7 @@ import "time"
 
 // HSet 将哈希表 key 中的字段 field 的值设为 value。
 // 返回值：如果 field 是新的，返回 1；如果 field 已经存在并覆盖，返回 0。
-func (d *DB) HSet(key, field, value string) int {
+func (d *shard) HSet(key, field, value string) int {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
@@ -56,7 +56,7 @@ func (d *DB) HSet(key, field, value string) int {
 }
 
 // HGet 获取哈希表中指定字段的值。
-func (d *DB) HGet(key, field string) (string, bool) {
+func (d *shard) HGet(key, field string) (string, bool) {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
@@ -85,7 +85,7 @@ func (d *DB) HGet(key, field string) (string, bool) {
 
 // HGetAll 获取哈希表中所有的字段和值。
 // 返回一个平铺的切片：[field1, value1, field2, value2...]
-func (d *DB) HGetAll(key string) []string {
+func (d *shard) HGetAll(key string) []string {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 

@@ -25,7 +25,7 @@ func approxSize(key, value string) int64 {
 //   3. 增加 usedBytes 计数
 //   4. 调用 lru.Touch() 标记为"最近使用"
 //   5. 若 usedBytes > maxMemoryBytes，循环淘汰最久未使用的 key
-func (d *DB) SetString(key, value string, expireAtMs int64) {
+func (d *shard) SetString(key, value string, expireAtMs int64) {
 	// 加写锁保护并发修改
 	d.mu.Lock()
 	defer d.mu.Unlock()
@@ -82,7 +82,7 @@ func (d *DB) SetString(key, value string, expireAtMs int64) {
 //   2. 检查是否已过期（ExpireAtMs > 0 && current_time > ExpireAtMs）
 //   3. 若过期，立即删除（惰性删除，不主动清理）
 //   4. 若未过期，更新 LastAccess，调用 lru.Touch() 刷新位置
-func (d *DB) GetString(key string) (string, bool) {
+func (d *shard) GetString(key string) (string, bool) {
 	// 加写锁保护并发修改（检查过期并删除需要加锁）
 	d.mu.Lock()
 	defer d.mu.Unlock()
@@ -113,7 +113,7 @@ func (d *DB) GetString(key string) (string, bool) {
 }
 
 // Del 删除一个或多个 key，返回成功删除的个数。
-func (d *DB) Del(keys ...string) int {
+func (d *shard) Del(keys ...string) int {
 	// 加写锁保护并发修改
 	d.mu.Lock()
 	defer d.mu.Unlock()

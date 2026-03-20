@@ -5,7 +5,7 @@ import "time"
 // SAdd 将一个或多个 member 元素加入到集合 key 当中。
 // 已经存在于集合的 member 元素将被忽略。
 // 返回值：被添加到集合中的新元素的数量，不包括被忽略的元素。
-func (d *DB) SAdd(key string, members ...string) int {
+func (d *shard) SAdd(key string, members ...string) int {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
@@ -50,7 +50,7 @@ func (d *DB) SAdd(key string, members ...string) int {
 }
 
 // SMembers 返回集合 key 中的所有成员。
-func (d *DB) SMembers(key string) []string {
+func (d *shard) SMembers(key string) []string {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
@@ -79,7 +79,7 @@ func (d *DB) SMembers(key string) []string {
 
 // SIsMember 判断 member 元素是否是集合 key 的成员。
 // 返回值：如果是返回 1，否则返回 0。
-func (d *DB) SIsMember(key, member string) int {
+func (d *shard) SIsMember(key, member string) int {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 

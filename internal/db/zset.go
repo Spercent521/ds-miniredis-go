@@ -13,7 +13,7 @@ type ZSetMember struct {
 }
 
 // ZAdd 将一个或多个 member 元素及其 score 值加入到有序集 key 当中。
-func (d *DB) ZAdd(key string, pairs ...ZSetMember) int {
+func (d *shard) ZAdd(key string, pairs ...ZSetMember) int {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
@@ -52,7 +52,7 @@ func (d *DB) ZAdd(key string, pairs ...ZSetMember) int {
 }
 
 // ZRange 返回有序集中，指定区间内的成员。
-func (d *DB) ZRange(key string, start, stop int, withScores bool) []string {
+func (d *shard) ZRange(key string, start, stop int, withScores bool) []string {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 

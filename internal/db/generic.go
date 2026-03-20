@@ -17,7 +17,7 @@ import (
 // 返回：
 //   - true 若 key 存在且设置成功
 //   - false 若 key 不存在
-func (d *DB) Expire(key string, expireAtMs int64) bool {
+func (d *shard) Expire(key string, expireAtMs int64) bool {
 	// 加写锁（修改 ExpireAtMs）
 	d.mu.Lock()
 	defer d.mu.Unlock()
@@ -39,7 +39,7 @@ func (d *DB) Expire(key string, expireAtMs int64) bool {
 //
 // 这个方法不会删除过期 key，只是计算剩余时间。
 // 删除过期 key 发生在 GetString（惰性删除）中。
-func (d *DB) TTLMs(key string) int64 {
+func (d *shard) TTLMs(key string) int64 {
 	// 加读锁（只读操作）
 	d.mu.RLock()
 	defer d.mu.RUnlock()
@@ -64,7 +64,7 @@ func (d *DB) TTLMs(key string) int64 {
 }
 
 // Exists 返回给定的 keys 中有多少个存在且未过期。
-func (d *DB) Exists(keys ...string) int {
+func (d *shard) Exists(keys ...string) int {
 	// 加读锁（只读操作）
 	d.mu.RLock()
 	defer d.mu.RUnlock()
@@ -95,7 +95,7 @@ func (d *DB) Exists(keys ...string) int {
 // 示例：
 //   - "user:*" 匹配 user:1、user:2 等
 //   - "key?" 匹配 key1、keyA 等
-func (d *DB) Keys(pattern string) []string {
+func (d *shard) Keys(pattern string) []string {
 	// 加读锁（只读操作）
 	d.mu.RLock()
 	defer d.mu.RUnlock()
@@ -120,7 +120,7 @@ func (d *DB) Keys(pattern string) []string {
 // DBSize 返回当前DB中key的数量（包含未被惰性删除的过期key）。
 // 注意：这个数字可能包含已过期但尚未被访问删除的key。
 // 如果需要精确的非过期key数量，需要另外计数。
-func (d *DB) DBSize() int {
+func (d *shard) DBSize() int {
 	// 加读锁（只读操作）
 	d.mu.RLock()
 	defer d.mu.RUnlock()
@@ -135,7 +135,7 @@ func (d *DB) DBSize() int {
 //   1. 清空 data map（所有 key-value 对）
 //   2. 重建 LRU 链表（清除所有访问记录）
 //   3. 重置 usedBytes 为 0（内存计数清零）
-func (d *DB) FlushDB() {
+func (d *shard) FlushDB() {
 	// 加写锁（修改所有数据）
 	d.mu.Lock()
 	defer d.mu.Unlock()
